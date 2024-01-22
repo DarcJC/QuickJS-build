@@ -72,21 +72,17 @@ jobs:
           prerelease: false
 
       - name: Upload Linux Release Assets
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./artifacts-linux/
-          asset_name: quickjs-linux-x86_64.a
-          asset_content_type: application/octet-stream
+        run: |
+          for file in artifacts-linux/*; do
+            if [ -f "$file" ]; then
+              curl -X POST -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" -H "Content-Type: $(file -b --mime-type "$file")" --data-binary @"$file" "${{ steps.create_release.outputs.upload_url }}?name=$(basename "$file")"
+            fi
+          done
 
       - name: Upload Windows Release Assets
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./artifacts-windows/
-          asset_name: quickjs-windows-x86_64.lib
-          asset_content_type: application/octet-stream
+        run: |
+          for file in artifacts-windows/*; do
+            if [ -f "$file" ]; then
+              curl -X POST -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" -H "Content-Type: $(file -b --mime-type "$file")" --data-binary @"$file" "${{ steps.create_release.outputs.upload_url }}?name=$(basename "$file")"
+            fi
+          done
