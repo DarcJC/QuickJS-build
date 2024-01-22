@@ -3,4 +3,4 @@
 !fetch_and_build.sh
 !CMakeLists.txt
 !README.md
-!.github
+!.github/.workflows/release.yml
