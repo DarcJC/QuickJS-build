@@ -2,16 +2,16 @@
 
 SHELL_FOLDER=$(cd "$(dirname "$0")";pwd)
 
-# 设置默认版本和源URL
+# Set default version and source URL
 DEFAULT_VERSION="2024-01-13"
 VERSION="${QUICKJS_VERSION:-$DEFAULT_VERSION}"
 SOURCE_URL="https://bellard.org/quickjs/quickjs-${VERSION}.tar.xz"
 
-# 通过环境变量读取DESTINATION_DIR，设置默认值
+# Read DESTINATION_DIR from environment variable, set default value
 DESTINATION_DIR="${QUICKJS_DEST_DIR:-quickjs}"
 TARGET_DIR="$DESTINATION_DIR/quickjs-$VERSION"
 
-# 检查目标目录是否存在
+# Check if the target directory exists
 if [ -d "${DESTINATION_DIR}" ]; then
     read -p "Directory ${DESTINATION_DIR} already exists. Do you want to remove it? (y/N) " response
     case "$response" in 
@@ -26,11 +26,11 @@ if [ -d "${DESTINATION_DIR}" ]; then
     esac
 fi
 
-# 创建存放QuickJS代码的目录
+# Create directory to store QuickJS code
 mkdir -p "${DESTINATION_DIR}"
 cd "${DESTINATION_DIR}"
 
-# 下载QuickJS源代码
+# Download QuickJS source code
 echo "Downloading QuickJS version ${VERSION}..."
 if curl -O "${SOURCE_URL}"; then
     echo "Download successful."
@@ -39,7 +39,7 @@ else
     exit 1
 fi
 
-# 解压下载的文件
+# Extract the downloaded file
 TAR_FILE="quickjs-${VERSION}.tar.xz"
 if [ -f "${TAR_FILE}" ]; then
     echo "Extracting ${TAR_FILE}..."
@@ -54,18 +54,18 @@ else
     exit 1
 fi
 
-# 确定解压后的实际目录名并进入该目录
+# Determine the actual directory name after extraction and enter the directory
 ACTUAL_DIR=$(tar -tf "${TAR_FILE}" | head -n 1 | cut -f1 -d"/")
 cd "${ACTUAL_DIR}"
 
-# 拷贝CMakeLists.txt到目标目录
+# Copy CMakeLists.txt to the target directory
 echo "Copying CMakeLists.txt to ${PWD}..."
 cp "${SHELL_FOLDER}/CMakeLists.txt" "${PWD}/"
 
-# 判断是否执行交叉编译
+# Determine whether to perform cross-compilation
 if [ "$1" == "--window" ]; then
     echo "Performing cross-compilation for Windows..."
-    CC=x86_64-w64-mingw32-gcc CXX=x86_64-w64-mingw32-g++ rm -rf build && cmake -B build -DCMAKE_SYSTEM_NAME=Windows -DCMAKE_STATIC_LIBRARY_SUFFIX_C=.lib && cmake --build build
+    rm -rf build && CC=x86_64-w64-mingw32-gcc CXX=x86_64-w64-mingw32-g++ cmake -B build -DCMAKE_SYSTEM_NAME=Windows -DCMAKE_STATIC_LIBRARY_SUFFIX_C=.lib && cmake --build build
 else
     echo "Performing regular compilation..."
     rm -rf build && cmake -B build && cmake --build build
