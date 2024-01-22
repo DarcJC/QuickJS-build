@@ -10,39 +10,50 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
     strategy:
       matrix:
         include:
-          - platform: linux
+          - os: ubuntu-latest
+            platform: linux
             arch: x86_64
             suffix: .a
             build_args: ""
-          - platform: linux
+          - os: ubuntu-latest
+            platform: linux
             arch: i386
             suffix: .a
             build_args: "CC=gcc -m32 CXX=g++ -m32"
-          - platform: windows
+          - os: ubuntu-latest
+            platform: windows
             arch: x86_64
             suffix: .lib
             build_args: "CC=x86_64-w64-mingw32-gcc CXX=x86_64-w64-mingw32-g++"
-          - platform: macos
+          - os: macos-latest
+            platform: macos
             arch: x86_64
             suffix: .a
-            build_args: "CC=o64-clang CXX=o64-clang++"
-          - platform: macos
+            build_args: ""
+          - os: macos-latest
+            platform: macos
             arch: arm
             suffix: .a
-            build_args: "CC=arm64-clang CXX=arm64-clang++"
+            build_args: ""
 
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
 
-      - name: Install dependencies
+      - name: Install dependencies (Ubuntu)
+        if: runner.os == 'Linux'
         run: |
           sudo apt-get update
           sudo apt-get install -y build-essential mingw-w64 gcc-multilib g++-multilib
+
+      - name: Install dependencies (macOS)
+        if: runner.os == 'macOS'
+        run: |
+          brew install make cmake gcc llvm
 
       - name: Run fetch_and_build.sh
         run: |
