@@ -81,7 +81,7 @@ jobs:
 
       - name: Download and Upload Release Assets
         run: |
-          sudo apt install jq
+          current_run_id=${{ github.run_id }}
           for platform in linux windows macos; do
             for arch in x86_64 i386 arm; do
               artifact_name=artifacts-$platform-$arch
@@ -91,7 +91,7 @@ jobs:
               download_url=$(curl -L \
                 -H "Accept: application/vnd.github+json" \
                 -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
-                https://api.github.com/repos/DarcJC/QuickJS-build/actions/artifacts | jq -r ".artifacts[] | select(.name==\"$artifact_name\") | .archive_download_url")
+                https://api.github.com/repos/DarcJC/QuickJS-build/actions/artifacts | jq -r ".artifacts[] | select(.name==\"$artifact_name\" and .workflow_run.id==$current_run_id) | .archive_download_url")
 
               if [ -n "$download_url" ]; then
                 # 下载 artifact
