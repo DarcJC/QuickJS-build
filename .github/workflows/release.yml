@@ -2,6 +2,11 @@ name: Build and Release
 
 on:
   workflow_dispatch:
+    inputs:
+      quickjs_version:
+        description: 'QuickJS version'
+        required: true
+        default: '2024-01-13'
 
 jobs:
   build:
@@ -47,6 +52,8 @@ jobs:
   release:
     needs: build
     runs-on: ubuntu-latest
+    env:
+      QUICKJS_VERSION: ${{ github.event.inputs.quickjs_version }}
     steps:
       - name: Download Linux Artifacts
         uses: actions/download-artifact@v2
@@ -66,8 +73,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ github.run_number }}
-          release_name: Release ${{ github.run_number }}
+          tag_name: ${{ github.event.inputs.quickjs_version }}.${{ github.run_number }}
+          release_name: QuickJS Release ${{ github.event.inputs.quickjs_version }}
           draft: false
           prerelease: false
 
@@ -75,7 +82,13 @@ jobs:
         run: |
           for file in artifacts-linux/*; do
             if [ -f "$file" ]; then
-              curl -X POST -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" -H "Content-Type: $(file -b --mime-type "$file")" --data-binary @"$file" "${{ steps.create_release.outputs.upload_url }}?name=$(basename "$file")"
+              curl -L \
+              -X POST \
+              -H "Accept: application/vnd.github+json" \
+              -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+              -H "Content-Type: application/octet-stream" \
+              "https://uploads.github.com/repos/DarcJC/QuickJS-build/releases/${{ steps.create_release.outputs.id }}/assets?name=$(basename "$file")" \
+              --data-binary @"$file"
             fi
           done
 
@@ -83,6 +96,12 @@ jobs:
         run: |
           for file in artifacts-windows/*; do
             if [ -f "$file" ]; then
-              curl -X POST -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" -H "Content-Type: $(file -b --mime-type "$file")" --data-binary @"$file" "${{ steps.create_release.outputs.upload_url }}?name=$(basename "$file")"
+              curl -L \
+              -X POST \
+              -H "Accept: application/vnd.github+json" \
+              -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+              -H "Content-Type: application/octet-stream" \
+              "https://uploads.github.com/repos/DarcJC/QuickJS-build/releases/${{ steps.create_release.outputs.id }}/assets?name=$(basename "$file")" \
+              --data-binary @"$file"
             fi
           done
