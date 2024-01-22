@@ -85,9 +85,23 @@ jobs:
             for arch in x86_64 i386 arm; do
               artifact_name=artifacts-$platform-$arch
               mkdir -p $artifact_name
-              echo "Downloading $artifact_name"
-              if wget -q --continue -O $artifact_name.zip "https://github.com/DarcJC/QuickJS-build/suites/${{ github.run_id }}/artifacts/$artifact_name"; then
+
+              # 使用 GitHub API 获取 artifact 的下载 URL
+              download_url=$(curl -L \
+                -H "Accept: application/vnd.github+json" \
+                -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+                https://api.github.com/repos/DarcJC/QuickJS-build/actions/artifacts | jq -r ".artifacts[] | select(.name==\"$artifact_name\") | .archive_download_url")
+
+              if [ -n "$download_url" ]; then
+                # 下载 artifact
+                curl -L \
+                  -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+                  -o $artifact_name.zip "$download_url"
+
+                # 解压 artifact
                 unzip -o -d $artifact_name $artifact_name.zip
+
+                # 上传文件到 release
                 for file in $artifact_name/*; do
                   if [ -f "$file" ]; then
                     curl -L \
