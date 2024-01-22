@@ -25,7 +25,7 @@ jobs:
           find . -name '*.a' -exec bash -c 'cp {} artifacts-linux/$(basename {} "-linux-x86_64.a")' \;
 
       - name: Run fetch_and_build.sh (Windows)
-        run: bash fetch_and_build.sh --window
+        run: echo "y" | bash fetch_and_build.sh --window
 
       - name: Rename and Collect Windows Artifacts
         run: |
