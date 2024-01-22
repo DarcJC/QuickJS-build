@@ -70,7 +70,7 @@ rm -rf build
 # Check for Windows cross-compilation
 if [[ "$COMPILATION_ARGS" == *"mingw32"* ]]; then
     # Windows cross-compilation
-    eval $COMPILATION_ARGS cmake -B build -DCMAKE_SYSTEM_NAME=Windows
+    eval $COMPILATION_ARGS cmake -B build -DCMAKE_SYSTEM_NAME=Windows -DCMAKE_STATIC_LIBRARY_SUFFIX_C=.lib
 else
     # Regular compilation
     eval $COMPILATION_ARGS cmake -B build

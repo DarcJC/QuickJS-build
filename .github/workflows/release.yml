@@ -51,7 +51,7 @@ jobs:
       - name: Rename and Collect Artifacts
         run: |
           mkdir -p artifacts-${{ matrix.platform }}-${{ matrix.arch }}
-          find . -name '*.${{ matrix.suffix }}' -exec bash -c 'cp {} artifacts-${{ matrix.platform }}-${{ matrix.arch }}/$(basename {} "-${{ matrix.platform }}-${{ matrix.arch }}.${{ matrix.suffix }}")' \;
+          find . -name 'libquickjs*.${{ matrix.suffix }}' -exec bash -c 'cp {} artifacts-${{ matrix.platform }}-${{ matrix.arch }}/$(basename {} | sed "s/libquickjs/libquickjs-${{ matrix.platform }}-${{ matrix.arch }}/")' \;
 
   release:
     needs: build
