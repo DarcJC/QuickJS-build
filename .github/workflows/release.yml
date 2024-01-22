@@ -81,7 +81,7 @@ jobs:
 
       - name: Download and Upload Release Assets
         run: |
-          apt install jq
+          sudo apt install jq
           for platform in linux windows macos; do
             for arch in x86_64 i386 arm; do
               artifact_name=artifacts-$platform-$arch
