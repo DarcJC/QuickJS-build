@@ -1,3 +1,4 @@
 *
 !.gitignore
 !fetch_and_build.sh
+!CMakeLists.txt
