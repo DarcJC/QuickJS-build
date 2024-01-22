@@ -1,4 +1,4 @@
-name: Build and Release
+name: Build and Release Multiple Platforms
 
 on:
   workflow_dispatch:
@@ -11,6 +11,29 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - platform: linux
+            arch: x86_64
+            suffix: .a
+            build_args: ""
+          - platform: linux
+            arch: i386
+            suffix: .a
+            build_args: "CC=gcc -m32 CXX=g++ -m32"
+          - platform: windows
+            arch: x86_64
+            suffix: .lib
+            build_args: "CC=x86_64-w64-mingw32-gcc CXX=x86_64-w64-mingw32-g++"
+          - platform: macos
+            arch: x86_64
+            suffix: .a
+            build_args: "CC=o64-clang CXX=o64-clang++"
+          - platform: macos
+            arch: arm
+            suffix: .a
+            build_args: "CC=arm64-clang CXX=arm64-clang++"
 
     steps:
       - name: Checkout Repository
@@ -19,53 +42,25 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y build-essential mingw-w64
+          sudo apt-get install -y build-essential mingw-w64 gcc-multilib g++-multilib
 
-      - name: Run fetch_and_build.sh (Linux)
-        run: bash fetch_and_build.sh
-
-      - name: Rename and Collect Linux Artifacts
+      - name: Run fetch_and_build.sh
         run: |
-          mkdir -p artifacts-linux
-          find . -name '*.a' -exec bash -c 'cp {} artifacts-linux/$(basename {} "-linux-x86_64.a")' \;
+          bash fetch_and_build.sh ${{ matrix.build_args }}
 
-      - name: Run fetch_and_build.sh (Windows)
-        run: echo "y" | bash fetch_and_build.sh --window
-
-      - name: Rename and Collect Windows Artifacts
+      - name: Rename and Collect Artifacts
         run: |
-          mkdir -p artifacts-windows
-          find . -name '*.lib' -exec bash -c 'cp {} artifacts-windows/$(basename {} "-windows-x86_64.lib")' \;
-
-      - name: Upload Linux Artifacts
-        uses: actions/upload-artifact@v2
-        with:
-          name: linux-artifacts
-          path: ./artifacts-linux/
-
-      - name: Upload Windows Artifacts
-        uses: actions/upload-artifact@v2
-        with:
-          name: windows-artifacts
-          path: ./artifacts-windows/
+          mkdir -p artifacts-${{ matrix.platform }}-${{ matrix.arch }}
+          find . -name '*.${{ matrix.suffix | trim }}' -exec bash -c 'cp {} artifacts-${{ matrix.platform }}-${{ matrix.arch }}/$(basename {} "-${{ matrix.platform }}-${{ matrix.arch }}.${{ matrix.suffix | trim }}")' \;
 
   release:
     needs: build
     runs-on: ubuntu-latest
-    env:
-      QUICKJS_VERSION: ${{ github.event.inputs.quickjs_version }}
     steps:
-      - name: Download Linux Artifacts
+      - name: Download Artifacts
         uses: actions/download-artifact@v2
         with:
-          name: linux-artifacts
-          path: ./artifacts-linux
-
-      - name: Download Windows Artifacts
-        uses: actions/download-artifact@v2
-        with:
-          name: windows-artifacts
-          path: ./artifacts-windows
+          path: ./artifacts
 
       - name: Create Release
         id: create_release
@@ -73,35 +68,23 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ github.event.inputs.quickjs_version }}.${{ github.run_number }}
+          tag_name: ${{ github.event.inputs.quickjs_version }}
           release_name: QuickJS Release ${{ github.event.inputs.quickjs_version }}
           draft: false
           prerelease: false
 
-      - name: Upload Linux Release Assets
+      - name: Upload Release Assets
         run: |
-          for file in artifacts-linux/*; do
-            if [ -f "$file" ]; then
-              curl -L \
-              -X POST \
-              -H "Accept: application/vnd.github+json" \
-              -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
-              -H "Content-Type: application/octet-stream" \
-              "https://uploads.github.com/repos/DarcJC/QuickJS-build/releases/${{ steps.create_release.outputs.id }}/assets?name=$(basename "$file")" \
-              --data-binary @"$file"
-            fi
-          done
-
-      - name: Upload Windows Release Assets
-        run: |
-          for file in artifacts-windows/*; do
-            if [ -f "$file" ]; then
-              curl -L \
-              -X POST \
-              -H "Accept: application/vnd.github+json" \
-              -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
-              -H "Content-Type: application/octet-stream" \
-              "https://uploads.github.com/repos/DarcJC/QuickJS-build/releases/${{ steps.create_release.outputs.id }}/assets?name=$(basename "$file")" \
-              --data-binary @"$file"
-            fi
+          for dir in artifacts/*; do
+            for file in "$dir"/*; do
+              if [ -f "$file" ]; then
+                curl -L \
+                -X POST \
+                -H "Accept: application/vnd.github+json" \
+                -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+                -H "Content-Type: application/octet-stream" \
+                "https://uploads.github.com/repos/DarcJC/QuickJS-build/releases/${{ steps.create_release.outputs.id }}/assets?name=$(basename "$file")" \
+                --data-binary @"$file"
+              fi
+            done
           done

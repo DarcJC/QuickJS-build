@@ -62,13 +62,20 @@ cd "${ACTUAL_DIR}"
 echo "Copying CMakeLists.txt to ${PWD}..."
 cp "${SHELL_FOLDER}/CMakeLists.txt" "${PWD}/"
 
-# Determine whether to perform cross-compilation
-if [ "$1" == "--window" ]; then
-    echo "Performing cross-compilation for Windows..."
-    rm -rf build && CC=x86_64-w64-mingw32-gcc CXX=x86_64-w64-mingw32-g++ cmake -B build -DCMAKE_SYSTEM_NAME=Windows -DCMAKE_STATIC_LIBRARY_SUFFIX_C=.lib && cmake --build build
+# Perform compilation based on the provided arguments
+COMPILATION_ARGS="$1"
+echo "Performing compilation with arguments: $COMPILATION_ARGS..."
+rm -rf build
+
+# Check for Windows cross-compilation
+if [[ "$COMPILATION_ARGS" == *"mingw32"* ]]; then
+    # Windows cross-compilation
+    eval $COMPILATION_ARGS cmake -B build -DCMAKE_SYSTEM_NAME=Windows
 else
-    echo "Performing regular compilation..."
-    rm -rf build && cmake -B build && cmake --build build
+    # Regular compilation
+    eval $COMPILATION_ARGS cmake -B build
 fi
+
+cmake --build build
 
 echo "QuickJS version ${VERSION} compilation is complete."
