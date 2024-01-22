@@ -101,6 +101,7 @@ jobs:
 
                 # 解压 artifact
                 unzip -o -d $artifact_name $artifact_name.zip
+                echo "$(ls -R $artifact_name)"
 
                 # 上传文件到 release
                 for file in $artifact_name/*; do
