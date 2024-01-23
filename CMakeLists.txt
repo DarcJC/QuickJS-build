@@ -11,13 +11,22 @@ add_library(quickjs STATIC ${quickjs_src})
 target_compile_definitions(quickjs PRIVATE ${quickjs_def} )
 set_target_properties(quickjs PROPERTIES PUBLIC_HEADER "quickjs.h;quickjs-libc.h")
 
+add_library(quickjs-dyn SHARED ${quickjs_src})
+target_compile_definitions(quickjs-dyn PRIVATE ${quickjs_def} )
+set_target_properties(quickjs-dyn PROPERTIES PUBLIC_HEADER "quickjs.h;quickjs-libc.h")
+
 add_library(quickjs-dumpleaks STATIC ${quickjs_src})
+target_compile_definitions(quickjs-dumpleaks PRIVATE ${quickjs_def} DUMP_LEAKS=1)
+
+add_library(quickjs-dumpleaks-dyn SHARED ${quickjs_src})
 target_compile_definitions(quickjs-dumpleaks PRIVATE ${quickjs_def} DUMP_LEAKS=1)
 
 if(UNIX OR MINGW)
   find_package(Threads)
   target_link_libraries(quickjs ${CMAKE_DL_LIBS} m Threads::Threads)
   target_link_libraries(quickjs-dumpleaks ${CMAKE_DL_LIBS} m Threads::Threads)
+  target_link_libraries(quickjs-dyn ${CMAKE_DL_LIBS} m Threads::Threads)
+  target_link_libraries(quickjs-dumpleaks-dyn ${CMAKE_DL_LIBS} m Threads::Threads)
 endif()
 
 # install
