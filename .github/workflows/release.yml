@@ -58,6 +58,11 @@ jobs:
       - name: Install dependencies (Windows)
         if: runner.os == 'Windows'
         uses: msys2/setup-msys2@v2
+        install: >-
+          ninja
+          curl
+          base-devel
+          mingw-w64-x86_64-toolchain
 
       - name: Run fetch_and_build.sh
         run: |

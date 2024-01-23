@@ -68,9 +68,9 @@ echo "Performing compilation with arguments: $COMPILATION_ARGS..."
 rm -rf build
 
 # Check for Windows cross-compilation
-if [[ "$COMPILATION_ARGS" == *"mingw32"* ]]; then
+if [[ "$COMPILATION_ARGS" == *"mingw32"* || "$(expr substr $(uname -s) 1 10)" == "MINGW32_NT" ]]; then
     # Windows cross-compilation
-    eval $COMPILATION_ARGS cmake -B build -DCMAKE_SYSTEM_NAME=Windows -DCMAKE_STATIC_LIBRARY_SUFFIX_C=.lib
+    eval $COMPILATION_ARGS cmake -B build -DCMAKE_SYSTEM_NAME=Windows -DCMAKE_STATIC_LIBRARY_SUFFIX_C=.lib -G Ninja
 else
     # Regular compilation
     eval $COMPILATION_ARGS cmake -B build
