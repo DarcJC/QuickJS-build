@@ -7,6 +7,10 @@ file(STRINGS VERSION version)
 set(quickjs_src quickjs.c libbf.c libunicode.c libregexp.c cutils.c quickjs-libc.c)
 set(quickjs_def CONFIG_VERSION="${version}" _GNU_SOURCE CONFIG_BIGNUM)
 
+if(WIN32)
+  set(CMAKE_GNUtoMS ON)
+endif()
+
 add_library(quickjs STATIC ${quickjs_src})
 target_compile_definitions(quickjs PRIVATE ${quickjs_def} )
 set_target_properties(quickjs PROPERTIES PUBLIC_HEADER "quickjs.h;quickjs-libc.h")

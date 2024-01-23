@@ -24,7 +24,7 @@ jobs:
             arch: i386
             suffix: .a
             build_args: "CC=gcc -m32 CXX=g++ -m32"
-          - os: ubuntu-latest
+          - os: windows-latest
             platform: windows
             arch: x86_64
             suffix: .lib
@@ -54,6 +54,10 @@ jobs:
         if: runner.os == 'macOS'
         run: |
           brew install make cmake gcc llvm
+
+      - name: Install dependencies (Windows)
+        if: runner.os == 'Windows'
+        uses: egor-tensin/setup-mingw@v2
 
       - name: Run fetch_and_build.sh
         run: |
