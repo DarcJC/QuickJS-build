@@ -66,11 +66,8 @@ jobs:
             mingw-w64-x86_64-toolchain
             mingw-w64-x86_64-ninja
             mingw-w64-x86_64-cmake
-        run: |
-          bash fetch_and_build.sh ${{ matrix.build_args }}
 
       - name: Run fetch_and_build.sh
-        if: runner.os != 'Windows'
         run: |
           bash fetch_and_build.sh ${{ matrix.build_args }}
 
