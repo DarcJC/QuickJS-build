@@ -82,11 +82,11 @@ jobs:
         if: runner.os != 'Windows'
         run: |
           mkdir -p artifacts-${{ matrix.platform }}-${{ matrix.arch }}
-          find . -name '*.lib' -exec bash -c 'cp {} artifacts-${{ matrix.platform }}-${{ matrix.arch }}/$(basename {} | sed "s/quickjs/quickjs-${{ matrix.platform }}-${{ matrix.arch }}/")' \;
-          find . -name '*.so' -exec bash -c 'cp {} artifacts-${{ matrix.platform }}-${{ matrix.arch }}/$(basename {} | sed "s/quickjs/quickjs-${{ matrix.platform }}-${{ matrix.arch }}/")' \;
-          find . -name '*.dylib' -exec bash -c 'cp {} artifacts-${{ matrix.platform }}-${{ matrix.arch }}/$(basename {} | sed "s/quickjs/quickjs-${{ matrix.platform }}-${{ matrix.arch }}/")' \;
-          find . -name '*.dll' -exec bash -c 'cp {} artifacts-${{ matrix.platform }}-${{ matrix.arch }}/$(basename {} | sed "s/quickjs/quickjs-${{ matrix.platform }}-${{ matrix.arch }}/")' \;
-          find .  name '*.a' -exec bash -c 'cp {} artifacts-${{ matrix.platform }}-${{ matrix.arch }}/$(basename {} | sed "s/quickjs/quickjs-${{ matrix.platform }}-${{ matrix.arch }}/")' \;
+          find . -name '*.lib' -exec bash -c 'cp {} artifacts-${{ matrix.platform }}-${{ matrix.arch }}/$(basename {} | sed "s/quickjs/quickjs-${{ matrix.platform }}-${{ matrix.arch }}/")'
+          find . -name '*.so' -exec bash -c 'cp {} artifacts-${{ matrix.platform }}-${{ matrix.arch }}/$(basename {} | sed "s/quickjs/quickjs-${{ matrix.platform }}-${{ matrix.arch }}/")'
+          find . -name '*.dylib' -exec bash -c 'cp {} artifacts-${{ matrix.platform }}-${{ matrix.arch }}/$(basename {} | sed "s/quickjs/quickjs-${{ matrix.platform }}-${{ matrix.arch }}/")'
+          find . -name '*.dll' -exec bash -c 'cp {} artifacts-${{ matrix.platform }}-${{ matrix.arch }}/$(basename {} | sed "s/quickjs/quickjs-${{ matrix.platform }}-${{ matrix.arch }}/")'
+          find .  name '*.a' -exec bash -c 'cp {} artifacts-${{ matrix.platform }}-${{ matrix.arch }}/$(basename {} | sed "s/quickjs/quickjs-${{ matrix.platform }}-${{ matrix.arch }}/")'
           echo "Finished"
 
       - name: Rename and Collect Artifacts (Windows)
@@ -94,11 +94,11 @@ jobs:
         shell: msys2 {0}
         run: |
           mkdir -p artifacts-${{ matrix.platform }}-${{ matrix.arch }}
-          find . -name '*.lib' -exec bash -c 'cp {} artifacts-${{ matrix.platform }}-${{ matrix.arch }}/$(basename {} | sed "s/quickjs/quickjs-${{ matrix.platform }}-${{ matrix.arch }}/")' \;
-          find . -name '*.so' -exec bash -c 'cp {} artifacts-${{ matrix.platform }}-${{ matrix.arch }}/$(basename {} | sed "s/quickjs/quickjs-${{ matrix.platform }}-${{ matrix.arch }}/")' \;
-          find . -name '*.dylib' -exec bash -c 'cp {} artifacts-${{ matrix.platform }}-${{ matrix.arch }}/$(basename {} | sed "s/quickjs/quickjs-${{ matrix.platform }}-${{ matrix.arch }}/")' \;
-          find . -name '*.dll' -exec bash -c 'cp {} artifacts-${{ matrix.platform }}-${{ matrix.arch }}/$(basename {} | sed "s/quickjs/quickjs-${{ matrix.platform }}-${{ matrix.arch }}/")' \;
-          find .  name '*.a' -exec bash -c 'cp {} artifacts-${{ matrix.platform }}-${{ matrix.arch }}/$(basename {} | sed "s/quickjs/quickjs-${{ matrix.platform }}-${{ matrix.arch }}/")' \;
+          find . -name '*.lib' -exec bash -c 'cp {} artifacts-${{ matrix.platform }}-${{ matrix.arch }}/$(basename {} | sed "s/quickjs/quickjs-${{ matrix.platform }}-${{ matrix.arch }}/")'
+          find . -name '*.so' -exec bash -c 'cp {} artifacts-${{ matrix.platform }}-${{ matrix.arch }}/$(basename {} | sed "s/quickjs/quickjs-${{ matrix.platform }}-${{ matrix.arch }}/")'
+          find . -name '*.dylib' -exec bash -c 'cp {} artifacts-${{ matrix.platform }}-${{ matrix.arch }}/$(basename {} | sed "s/quickjs/quickjs-${{ matrix.platform }}-${{ matrix.arch }}/")'
+          find . -name '*.dll' -exec bash -c 'cp {} artifacts-${{ matrix.platform }}-${{ matrix.arch }}/$(basename {} | sed "s/quickjs/quickjs-${{ matrix.platform }}-${{ matrix.arch }}/")'
+          find .  name '*.a' -exec bash -c 'cp {} artifacts-${{ matrix.platform }}-${{ matrix.arch }}/$(basename {} | sed "s/quickjs/quickjs-${{ matrix.platform }}-${{ matrix.arch }}/")'
           echo "Finished"
 
       - name: Upload Artifacts
