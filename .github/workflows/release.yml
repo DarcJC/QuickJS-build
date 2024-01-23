@@ -81,9 +81,7 @@ jobs:
       - name: Rename and Collect Artifacts
         run: |
           mkdir -p artifacts-${{ matrix.platform }}-${{ matrix.arch }}
-          find . -name '*${{ matrix.suffix }}' -exec bash -c 'cp {} artifacts-${{ matrix.platform }}-${{ matrix.arch }}/$(basename {} | sed "s/quickjs/quickjs-${{ matrix.platform }}-${{ matrix.arch }}/")' \;
-          find . -name '*.so' -exec bash -c 'cp {} artifacts-${{ matrix.platform }}-${{ matrix.arch }}/$(basename {} | sed "s/quickjs/quickjs-${{ matrix.platform }}-${{ matrix.arch }}/")' \;
-          find . -name '*.dll' -exec bash -c 'cp {} artifacts-${{ matrix.platform }}-${{ matrix.arch }}/$(basename {} | sed "s/quickjs/quickjs-${{ matrix.platform }}-${{ matrix.arch }}/")' \;
+          find . -name '*${{ matrix.suffix }}' -o -name '*.so' -o -name '*.dylib' -o -name '*.dll' -exec bash -c 'cp {} artifacts-${{ matrix.platform }}-${{ matrix.arch }}/$(basename {} | sed "s/quickjs/quickjs-${{ matrix.platform }}-${{ matrix.arch }}/")' \;
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v2
