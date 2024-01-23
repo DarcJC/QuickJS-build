@@ -60,10 +60,11 @@ jobs:
         uses: msys2/setup-msys2@v2
         with:
           install: >-
-            ninja
             curl
             base-devel
             mingw-w64-x86_64-toolchain
+            mingw-w64-x86_64-ninja
+            mingw-w64-x86_64-cmake
 
       - name: Run fetch_and_build.sh
         run: |
