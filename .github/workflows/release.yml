@@ -78,7 +78,15 @@ jobs:
         run: |
           bash fetch_and_build.sh ${{ matrix.build_args }}
 
-      - name: Rename and Collect Artifacts
+      - name: Rename and Collect Artifacts (Generic)
+        if: runner.os != 'Windows'
+        run: |
+          mkdir -p artifacts-${{ matrix.platform }}-${{ matrix.arch }}
+          find . -name '*.lib' -o -name '*.so' -o -name '*.dylib' -o -name '*.dll' -o -name '*.a' -exec bash -c 'cp {} artifacts-${{ matrix.platform }}-${{ matrix.arch }}/$(basename {} | sed "s/quickjs/quickjs-${{ matrix.platform }}-${{ matrix.arch }}/")' \;
+      
+      - name: Rename and Collect Artifacts (Windows)
+        if: runner.os == 'Windows'
+        shell: msys2 {0}
         run: |
           mkdir -p artifacts-${{ matrix.platform }}-${{ matrix.arch }}
           find . -name '*.lib' -o -name '*.so' -o -name '*.dylib' -o -name '*.dll' -o -name '*.a' -exec bash -c 'cp {} artifacts-${{ matrix.platform }}-${{ matrix.arch }}/$(basename {} | sed "s/quickjs/quickjs-${{ matrix.platform }}-${{ matrix.arch }}/")' \;
