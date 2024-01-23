@@ -59,7 +59,7 @@ jobs:
         if: runner.os == 'Windows'
         uses: msys2/setup-msys2@v2
         with:
-          path-type: inherit
+          path-type: strict
           install: >-
             curl
             base-devel
