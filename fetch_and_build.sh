@@ -8,7 +8,7 @@ VERSION="${QUICKJS_VERSION:-$DEFAULT_VERSION}"
 
 # Read DESTINATION_DIR from environment variable, set default value
 DESTINATION_DIR="${QUICKJS_DEST_DIR:-quickjs}"
-TARGET_DIR="$DESTINATION_DIR/quickjs-$VERSION"
+TARGET_DIR="$DESTINATION_DIR/quickjs-default"
 
 # Check if VERSION is a URL
 if [[ $VERSION =~ ^https?:// ]]; then
