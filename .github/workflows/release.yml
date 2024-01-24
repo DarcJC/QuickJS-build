@@ -7,6 +7,10 @@ on:
         description: 'QuickJS version'
         required: true
         default: '2024-01-13'
+      release_name:
+        description: 'Release name'
+        required: true
+        default: '2024-01-13'
 
 jobs:
   build:
@@ -122,8 +126,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ github.event.inputs.quickjs_version }}.${{ github.run_number }}
-          release_name: QuickJS Release ${{ github.event.inputs.quickjs_version }}
+          tag_name: ${{ github.event.inputs.release_name }}.${{ github.run_number }}
+          release_name: QuickJS Release ${{ github.event.inputs.release_name }}
           draft: false
           prerelease: false
 
