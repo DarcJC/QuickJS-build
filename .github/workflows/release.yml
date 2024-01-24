@@ -74,13 +74,13 @@ jobs:
       - name: Run fetch_and_build.sh (Generic)
         if: runner.os != 'Windows'
         run: |
-          bash fetch_and_build.sh ${{ matrix.build_args }}
+          VERSION=${{ github.event.inputs.quickjs_version }} bash fetch_and_build.sh ${{ matrix.build_args }}
 
       - name: Run fetch_and_build.sh (Windows)
         if: runner.os == 'Windows'
         shell: msys2 {0}
         run: |
-          bash fetch_and_build.sh ${{ matrix.build_args }}
+          VERSION=${{ github.event.inputs.quickjs_version }} bash fetch_and_build.sh ${{ matrix.build_args }}
 
       - name: Rename and Collect Artifacts (Generic)
         if: runner.os != 'Windows'
