@@ -4,13 +4,17 @@ on:
   workflow_dispatch:
     inputs:
       quickjs_version:
-        description: 'QuickJS version'
+        description: 'QuickJS version or Git url'
         required: true
         default: '2024-01-13'
       release_name:
         description: 'Release name'
         required: true
         default: '2024-01-13'
+      git_branch:
+        description: 'Branch to use (Valid when using git url)'
+        required: true
+        default: master
 
 jobs:
   build:
@@ -75,13 +79,13 @@ jobs:
       - name: Run fetch_and_build.sh (Generic)
         if: runner.os != 'Windows'
         run: |
-          QUICKJS_VERSION=${{ github.event.inputs.quickjs_version }} bash fetch_and_build.sh ${{ matrix.build_args }}
+          QUICKJS_VERSION=${{ github.event.inputs.quickjs_version }} GIT_BRANCH=${{ github.event.inputs.git_branch }} bash fetch_and_build.sh ${{ matrix.build_args }}
 
       - name: Run fetch_and_build.sh (Windows)
         if: runner.os == 'Windows'
         shell: msys2 {0}
         run: |
-          QUICKJS_VERSION=${{ github.event.inputs.quickjs_version }} bash fetch_and_build.sh ${{ matrix.build_args }}
+          QUICKJS_VERSION=${{ github.event.inputs.quickjs_version }} GIT_BRANCH=${{ github.event.inputs.git_branch }} bash fetch_and_build.sh ${{ matrix.build_args }}
 
       - name: Rename and Collect Artifacts (Generic)
         if: runner.os != 'Windows'
@@ -131,6 +135,9 @@ jobs:
           release_name: QuickJS Release ${{ github.event.inputs.release_name }}
           draft: false
           prerelease: false
+          body: |
+            Version (or Git repo): ${{ github.event.inputs.quickjs_version }}
+            Branch: ${{ github.event.inputs.git_branch }}
 
       - name: Upload Release Assets
         run: |
