@@ -6,6 +6,9 @@ SHELL_FOLDER=$(cd "$(dirname "$0")";pwd)
 DEFAULT_VERSION="2024-01-13"
 VERSION="${QUICKJS_VERSION:-$DEFAULT_VERSION}"
 
+DEFAULT_BRANCH="master"
+BRANCH="${GIT_BRANCH:-$DEFAULT_BRANCH}"
+
 # Read DESTINATION_DIR from environment variable, set default value
 DESTINATION_DIR="${QUICKJS_DEST_DIR:-quickjs}"
 TARGET_DIR="$DESTINATION_DIR/quickjs-default"
